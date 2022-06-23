@@ -16,30 +16,32 @@ const addUser = (data) => {
     !users.some(item => item.userId === data.userId) && users.push(data)
 }
 const removeUser = (socketId) => {
-    users.filter(item => item.socketId !== socketId)
+    users = users.filter(item => item.socketId !== socketId)
 }
-const getReceiver = (userId) => {
-    console.log(users);
-    console.log(userId);
+const getUser = (userId) => {
     return users.find(item => item.userId === userId)
 }
 
 // handle with socket
 io.on('connection', (socket) => {
 
-    // mỗi khi user online thì mới thực hiện xử lí //
+    // mỗi khi user online thì mới thực hiện xử lí
     socket.on('online', (data) => {
         addUser({ ...data, socketId: socket.id })
         console.log(users);
-        socket.on('addFriend', (payload) => {
-            console.log(getReceiver(payload.friendId))
+        //  xử lí thông báo kết bạn
+        socket.on('reqAddFriend', (payload) => {
+            let receiver = getUser(payload.friendId)
+            if (receiver) {
+                socket.to(receiver.socketId).emit('addFriendOnline', { ...payload, status: 'online' })
+            } else {
+                socket.emit('addFriendOffline', { ...payload, status: 'offline' })
+            }
         })
     })
 
 
-
-    socket.on('disconnect', () => {
-        removeUser(socket.id)
-    })
+    // xóa user khỏi mảng user online
+    socket.on('disconnect', () => { removeUser(socket.id) })
 })
 
