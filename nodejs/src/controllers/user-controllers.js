@@ -84,10 +84,29 @@ let getInfoFriends = async (req, res) => {
         })
     }
 }
+let updateStatusFriend = async (req, res) => {
+    try {
+        if (!req.body?.friendId || !req.body.userId) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.updateInfoAddFriend(req.body)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
 module.exports = {
     getAllUser,
     updateAvatar,
     createFriend,
     getFriend,
-    getInfoFriends
+    getInfoFriends,
+    updateStatusFriend
 }

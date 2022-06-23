@@ -80,7 +80,7 @@ let getFriendService = (query) => {
                 where: { from: query.userId },
                 raw: true,
                 include: {
-                    model: db.User, attributes: ['username', 'avatar'], as: 'test'
+                    model: db.User, attributes: ['username', 'avatar']
                 }
             })
             resolve({
@@ -149,13 +149,18 @@ let getUserInfo = (userId) => {
 }
 let updateInfoAddFriend = (body) => {
     return new Promise(async (resolve, reject) => {
-        let friendId = decrypt(process.env.SALT, body.friendId)
         try {
-            await db.Friend.update({
+            await Promise.all([db.Friend.update({
                 status: 'OK'
             }, {
-                where: { from: body.userId, to: +friendId },
+                where: { from: body.userId, to: body.friendId },
+            }),
+            db.Friend.create({
+                from: body.friendId,
+                to: body.userId,
+                status: 'OK'
             })
+            ])
             resolve({
                 err: 0,
                 msg: 'OK',
