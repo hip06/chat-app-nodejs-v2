@@ -25,10 +25,10 @@ const getUser = (userId) => {
 // handle with socket
 io.on('connection', (socket) => {
 
-    // mỗi khi user online thì mới thực hiện xử lí
+    // mỗi khi user online thì mới thực hiện xử lí 
     socket.on('online', (data) => {
         addUser({ ...data, socketId: socket.id })
-        console.log(users);
+        // console.log(users);
         //  xử lí thông báo kết bạn
         socket.on('reqAddFriend', (payload) => {
             let receiver = getUser(payload.friendId)
@@ -42,6 +42,9 @@ io.on('connection', (socket) => {
 
 
     // xóa user khỏi mảng user online
-    socket.on('disconnect', () => { removeUser(socket.id) })
+    socket.on('disconnect', () => {
+        removeUser(socket.id)
+        // console.log(users);
+    })
 })
 

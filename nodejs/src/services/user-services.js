@@ -75,13 +75,12 @@ let createFriendService = (body) => {
 }
 let getFriendService = (query) => {
     return new Promise(async (resolve, reject) => {
-        let userId = decrypt(process.env.SALT, query.userId)
         try {
             let response = await db.Friend.findAll({
-                where: { from: +userId },
+                where: { from: query.userId },
                 raw: true,
                 include: {
-                    model: db.User, attributes: ['username', 'avatar'], as: 'listFriend'
+                    model: db.User, attributes: ['username', 'avatar'], as: 'test'
                 }
             })
             resolve({
