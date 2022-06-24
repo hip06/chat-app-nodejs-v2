@@ -155,12 +155,37 @@ let updateInfoAddFriend = (body) => {
             }, {
                 where: { from: body.userId, to: body.friendId },
             }),
-            db.Friend.create({
-                from: body.friendId,
-                to: body.userId,
-                status: 'OK'
+            db.Friend.findOrCreate({
+                where: { from: body.friendId, to: body.userId, status: 'OK' },
+                defaults: {
+                    from: body.friendId,
+                    to: body.userId,
+                    status: 'OK'
+                }
+            }),
+            db.Conversation.create({
+                conversationId: Math.floor(Math.random() * Math.pow(10, 6)),
+                userOne: body.userId,
+                userTwo: body.friendId
             })
             ])
+            resolve({
+                err: 0,
+                msg: 'OK',
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+let createMessageService = (body) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = await db.Conversation.findOne({
+                where: { conversationId: body.conversationId },
+                raw: true
+            })
+            console.log(response);
             resolve({
                 err: 0,
                 msg: 'OK',
@@ -177,5 +202,6 @@ module.exports = {
     getFriendService,
     getInfoFriendsService,
     getUserInfo,
-    updateInfoAddFriend
+    updateInfoAddFriend,
+    createMessageService
 }

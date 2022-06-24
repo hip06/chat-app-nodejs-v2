@@ -102,11 +102,30 @@ let updateStatusFriend = async (req, res) => {
         })
     }
 }
+let createMessage = async (req, res) => {
+    try {
+        if (!req.body?.conversationId || !req.body?.userOne || !req.body?.userTwo) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.createMessageService(req.body)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
 module.exports = {
     getAllUser,
     updateAvatar,
     createFriend,
     getFriend,
     getInfoFriends,
-    updateStatusFriend
+    updateStatusFriend,
+    createMessage
 }
