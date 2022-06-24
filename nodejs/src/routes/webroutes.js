@@ -22,7 +22,9 @@ const initWebRoutes = (app) => {
     router.put('/api/update-status-friends', userController.updateStatusFriend)
 
     // conversation
-    router.post('/api/create-messages', userController.createMessage)
+    router.get('/api/get-conversation-id', userController.getRoomId)
+    router.put('/api/update-chat', userController.updateChat)
+    router.get('/api/past-chat', userController.getPastChat)
 
 
 

@@ -102,15 +102,51 @@ let updateStatusFriend = async (req, res) => {
         })
     }
 }
-let createMessage = async (req, res) => {
+let updateChat = async (req, res) => {
     try {
-        if (!req.body?.conversationId || !req.body?.userOne || !req.body?.userTwo) {
+        if (!req.body?.conversationId) {
             return res.status(200).json({
                 err: 3,
                 msg: 'Misding input !'
             })
         } else {
-            let response = await userService.createMessageService(req.body)
+            let response = await userService.updateChatService(req.body)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
+let getRoomId = async (req, res) => {
+    try {
+        if (!req.query?.userId || !req.query?.friendId) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.getRoomIdService(req.query)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
+let getPastChat = async (req, res) => {
+    try {
+        if (!req.query?.conversationId) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.getPastChatService(req.query)
             res.status(200).json(response)
         }
     } catch (error) {
@@ -127,5 +163,7 @@ module.exports = {
     getFriend,
     getInfoFriends,
     updateStatusFriend,
-    createMessage
+    updateChat,
+    getRoomId,
+    getPastChat
 }

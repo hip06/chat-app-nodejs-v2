@@ -178,17 +178,73 @@ let updateInfoAddFriend = (body) => {
         }
     })
 }
-let createMessageService = (body) => {
+let updateChatService = (body) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let content = []
             let response = await db.Conversation.findOne({
                 where: { conversationId: body.conversationId },
                 raw: true
             })
             console.log(response);
+            if (response.text) {
+                content = JSON.parse(response.text) // parse string to array
+            }
+            await db.Conversation.update({
+                text: JSON.stringify([...content, body.content]) // lưu mảng dưới dạng string 
+            }, {
+                where: { conversationId: body.conversationId },
+            })
             resolve({
                 err: 0,
                 msg: 'OK',
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+let getRoomIdService = (query) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response
+            response = await db.Conversation.findOne({
+                where: { userOne: query.userId, userTwo: query.friendId },
+                raw: true
+            })
+            if (!response) {
+                response = await db.Conversation.findOne({
+                    where: { userOne: query.friendId, userTwo: query.userId },
+                    raw: true
+                })
+            }
+            response ? resolve({
+                err: 0,
+                msg: 'OK',
+                response
+            }) : resolve({
+                err: 1,
+                msg: 'Not found conversationId!',
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+let getPastChatService = (query) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = await db.Conversation.findOne({
+                where: { conversationId: query.conversationId },
+                raw: true
+            })
+            response ? resolve({
+                err: 0,
+                msg: 'OK',
+                response
+            }) : resolve({
+                err: 1,
+                msg: 'Not found conversationId!',
             })
         } catch (error) {
             reject(error)
@@ -203,5 +259,7 @@ module.exports = {
     getInfoFriendsService,
     getUserInfo,
     updateInfoAddFriend,
-    createMessageService
+    updateChatService,
+    getRoomIdService,
+    getPastChatService
 }

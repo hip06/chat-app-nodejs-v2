@@ -39,6 +39,24 @@ io.on('connection', (socket) => {
             }
         })
     })
+    socket.on('joinRoom', (data) => {
+        socket.join(data.conversationId)
+        let ready = false
+
+        socket.on('sendMessage', (message) => {
+            // tạo phòng chat >> nếu receiver ko online sẽ lưu DB / nếu online bắn 1 signal cho receiver >> receiver join room
+            if (getUser(data.receiver) && !ready) {
+                ready = true
+                socket.to(getUser(data.receiver).socketId).emit('newChat', {
+                    err: 0,
+                    msg: 'Có người muốn chat với bạn',
+                    conversationId: data.conversationId
+                })
+            }
+            socket.to(data.conversationId).emit('receiveMessage', message)
+        })
+    })
+
 
 
     // xóa user khỏi mảng user online
