@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Friend.belongsTo(models.User, { foreignKey: 'from', targetKey: 'id' })
-            Friend.belongsTo(models.User, { foreignKey: 'to', targetKey: 'id' })
+            Friend.belongsTo(models.User, { foreignKey: 'from', targetKey: 'id', as: 'sender' })
+            Friend.belongsTo(models.User, { foreignKey: 'to', targetKey: 'id', as: 'receiver' })
         }
     }
     Friend.init({

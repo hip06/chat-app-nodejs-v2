@@ -38,16 +38,22 @@ io.on('connection', (socket) => {
                 socket.emit('addFriendOffline', { ...payload, status: 'offline' })
             }
         })
+        socket.on('addFriendSucceed', (data) => {
+            let sender = getUser(data?.userId)
+            if (sender) {
+                socket.to(sender.socketId).emit('addFriendSucceedServer')
+            }
+        })
     })
     socket.on('joinRoom', (dataConversation) => {
         if (dataConversation.prevConversationId) socket.leave(dataConversation.prevConversationId) // leave previous room if have
         socket.join(dataConversation.conversationId)
 
         socket.on('sendMessage', (dataMessage) => {
-            // tạo phòng chat >> nếu receiver ko online sẽ lưu DB / nếu online bắn 1 signal cho receiver >> receiver join room
+            // tạo phòng chat >> nếu receiver ko online sẽ lưu DB / nếu online bắn 1 signal cho receiver >> receiver join room 
             let receiver = getUser(dataMessage?.content?.receiver)
             if (receiver) {
-                socket.to(getUser(receiver).socketId).emit('newChat', `Bạn có tin nhắn mới từ ${dataMessage.username}`)
+                socket.to(receiver.socketId).emit('newChat', `Bạn có tin nhắn mới từ ${dataMessage.username}`)
             } else {
                 socket.emit('receiverOffilne', dataMessage)
             }

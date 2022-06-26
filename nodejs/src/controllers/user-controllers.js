@@ -192,6 +192,24 @@ let getNoticeOffline = async (req, res) => {
         })
     }
 }
+let deleteNoticeOffline = async (req, res) => {
+    try {
+        if (!req.query?.userId) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.deleteNoticeOfflineService(req.query)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
 module.exports = {
     getAllUser,
     updateAvatar,
@@ -203,5 +221,6 @@ module.exports = {
     getRoomId,
     getPastChat,
     createNoticeOffline,
-    getNoticeOffline
+    getNoticeOffline,
+    deleteNoticeOffline
 }

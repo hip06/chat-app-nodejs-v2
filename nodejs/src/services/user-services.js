@@ -76,17 +76,23 @@ let createFriendService = (body) => {
 let getFriendService = (query) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = await db.Friend.findAll({
-                where: { from: query.userId },
+            let [res1, res2] = await Promise.all([db.Friend.findAll({
+                where: [{ from: query.userId }],
                 raw: true,
                 include: {
-                    model: db.User, attributes: ['username', 'avatar']
+                    model: db.User, attributes: ['username', 'avatar'], as: 'receiver'
                 }
-            })
+            }), db.Friend.findAll({
+                where: { to: query.userId, status: 'Pending' },
+                raw: true,
+                include: {
+                    model: db.User, attributes: ['username', 'avatar'], as: 'sender'
+                }
+            })])
             resolve({
                 err: 0,
                 msg: 'OK',
-                response
+                response: [...res1, ...res2]
             })
         } catch (error) {
             reject(error)
@@ -291,6 +297,22 @@ let getNoticeOfflineService = (query) => {
         }
     })
 }
+let deleteNoticeOfflineService = (query) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.NoticeOffline.destroy({
+                where: { to: +query.userId },
+                raw: true,
+            })
+            resolve({
+                err: 0,
+                msg: 'OK',
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getAllUserService,
     updateAvatarService,
@@ -303,5 +325,6 @@ module.exports = {
     getRoomIdService,
     getPastChatService,
     createNoticeOfflineService,
-    getNoticeOfflineService
+    getNoticeOfflineService,
+    deleteNoticeOfflineService
 }

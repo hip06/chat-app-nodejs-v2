@@ -27,6 +27,7 @@ const initWebRoutes = (app) => {
     router.get('/api/past-chat', userController.getPastChat)
     router.post('/api/create-notice-offine', userController.createNoticeOffline)
     router.get('/api/get-notice-offine', userController.getNoticeOffline)
+    router.delete('/api/delete-notice-offine', userController.deleteNoticeOffline)
 
 
 
