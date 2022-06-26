@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     NoticeOffline.init({
         from: DataTypes.INTEGER,
         to: DataTypes.INTEGER,
+        nameSender: DataTypes.STRING,
+        timestamp: DataTypes.STRING,
         content: DataTypes.TEXT,
     }, {
         sequelize,

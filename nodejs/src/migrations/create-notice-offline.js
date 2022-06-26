@@ -14,6 +14,12 @@ module.exports = {
             to: {
                 type: Sequelize.INTEGER
             },
+            nameSender: {
+                type: Sequelize.STRING
+            },
+            timestamp: {
+                type: Sequelize.STRING
+            },
             content: {
                 type: Sequelize.TEXT('long')
             },

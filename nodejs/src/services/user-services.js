@@ -186,7 +186,6 @@ let updateChatService = (body) => {
                 where: { conversationId: body.conversationId },
                 raw: true
             })
-            console.log(response);
             if (response.text) {
                 content = JSON.parse(response.text) // parse string to array
             }
@@ -251,6 +250,47 @@ let getPastChatService = (query) => {
         }
     })
 }
+let createNoticeOfflineService = (body) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = await db.NoticeOffline.findOrCreate({
+                where: { from: body.sender, to: body.receiver, timestamp: JSON.stringify(body.createAt) },
+                raw: true,
+                defaults: {
+                    from: body.sender,
+                    to: body.receiver,
+                    content: body.text,
+                    nameSender: body.nameSender,
+                    timestamp: JSON.stringify(body.createAt)
+                }
+            })
+            resolve({
+                err: 0,
+                msg: 'OK',
+                response
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+let getNoticeOfflineService = (query) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = await db.NoticeOffline.findAll({
+                where: { to: +query.receiver },
+                raw: true,
+            })
+            resolve({
+                err: 0,
+                msg: 'OK',
+                response
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     getAllUserService,
     updateAvatarService,
@@ -261,5 +301,7 @@ module.exports = {
     updateInfoAddFriend,
     updateChatService,
     getRoomIdService,
-    getPastChatService
+    getPastChatService,
+    createNoticeOfflineService,
+    getNoticeOfflineService
 }

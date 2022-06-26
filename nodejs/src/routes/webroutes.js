@@ -25,6 +25,8 @@ const initWebRoutes = (app) => {
     router.get('/api/get-conversation-id', userController.getRoomId)
     router.put('/api/update-chat', userController.updateChat)
     router.get('/api/past-chat', userController.getPastChat)
+    router.post('/api/create-notice-offine', userController.createNoticeOffline)
+    router.get('/api/get-notice-offine', userController.getNoticeOffline)
 
 
 

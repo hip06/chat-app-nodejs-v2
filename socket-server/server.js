@@ -39,21 +39,19 @@ io.on('connection', (socket) => {
             }
         })
     })
-    socket.on('joinRoom', (data) => {
-        socket.join(data.conversationId)
-        let ready = false
+    socket.on('joinRoom', (dataConversation) => {
+        if (dataConversation.prevConversationId) socket.leave(dataConversation.prevConversationId) // leave previous room if have
+        socket.join(dataConversation.conversationId)
 
-        socket.on('sendMessage', (message) => {
+        socket.on('sendMessage', (dataMessage) => {
             // tạo phòng chat >> nếu receiver ko online sẽ lưu DB / nếu online bắn 1 signal cho receiver >> receiver join room
-            if (getUser(data.receiver) && !ready) {
-                ready = true
-                socket.to(getUser(data.receiver).socketId).emit('newChat', {
-                    err: 0,
-                    msg: 'Có người muốn chat với bạn',
-                    conversationId: data.conversationId
-                })
+            let receiver = getUser(dataMessage?.content?.receiver)
+            if (receiver) {
+                socket.to(getUser(receiver).socketId).emit('newChat', `Bạn có tin nhắn mới từ ${dataMessage.username}`)
+            } else {
+                socket.emit('receiverOffilne', dataMessage)
             }
-            socket.to(data.conversationId).emit('receiveMessage', message)
+            socket.to(dataMessage.conversationId).emit('receiveMessage', dataMessage)
         })
     })
 

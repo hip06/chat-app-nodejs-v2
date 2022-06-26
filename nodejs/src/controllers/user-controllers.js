@@ -156,6 +156,42 @@ let getPastChat = async (req, res) => {
         })
     }
 }
+let createNoticeOffline = async (req, res) => {
+    try {
+        if (!req.body?.sender || !req.body?.receiver) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.createNoticeOfflineService(req.body)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
+let getNoticeOffline = async (req, res) => {
+    try {
+        if (!req.query?.receiver) {
+            return res.status(200).json({
+                err: 3,
+                msg: 'Misding input !'
+            })
+        } else {
+            let response = await userService.getNoticeOfflineService(req.query)
+            res.status(200).json(response)
+        }
+    } catch (error) {
+        res.status(200).json({
+            err: -1,
+            msg: 'Fail at controller: ' + error
+        })
+    }
+}
 module.exports = {
     getAllUser,
     updateAvatar,
@@ -165,5 +201,7 @@ module.exports = {
     updateStatusFriend,
     updateChat,
     getRoomId,
-    getPastChat
+    getPastChat,
+    createNoticeOffline,
+    getNoticeOffline
 }
